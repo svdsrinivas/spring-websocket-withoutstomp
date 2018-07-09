@@ -6,11 +6,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -20,7 +21,7 @@ import com.mia.wskafka.kafka.MessageStorage;
 import com.mia.wskafka.kafka.Offer;
 
 @Component
-public class SocketHandler extends TextWebSocketHandler {
+public class SocketHandler extends TextWebSocketHandler implements WebSocketHandler{
 	
 	@Autowired
 	KafkaProducer producer;
@@ -65,4 +66,10 @@ public class SocketHandler extends TextWebSocketHandler {
 		String stoken = (String) session.getAttributes().get("stoken");
 		sessions.put(stoken,session);
 	}
+	
+	 @Override
+	 public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+	     sessions.remove(session);
+	 }
+
 }
