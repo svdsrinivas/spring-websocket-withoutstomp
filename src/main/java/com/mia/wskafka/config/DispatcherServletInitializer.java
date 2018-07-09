@@ -16,7 +16,6 @@
 
 package com.mia.wskafka.config;
 
-import org.springframework.samples.portfolio.config.WebSocketConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 
@@ -34,6 +33,6 @@ public class DispatcherServletInitializer extends AbstractAnnotationConfigDispat
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[] { "/" };
+		return new String[] { "/*" };
 	}
 }
