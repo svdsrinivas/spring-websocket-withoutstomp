@@ -1,14 +1,10 @@
 package com.mia.wskafka.config;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
@@ -20,7 +16,6 @@ import com.mia.wskafka.kafka.KafkaProducer;
 import com.mia.wskafka.kafka.MessageStorage;
 import com.mia.wskafka.kafka.Offer;
 
-@Component
 public class SocketHandler extends TextWebSocketHandler implements WebSocketHandler{
 	
 	@Autowired
@@ -28,48 +23,34 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	
 	@Autowired
 	MessageStorage storage;
-	
-	Map<String,WebSocketSession> sessions = new ConcurrentHashMap<>();
+
+	public static Map<String,WebSocketSession> sessions = new ConcurrentHashMap<>();
 
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws InterruptedException, IOException {
-		System.out.println(message.getPayload());
+		System.out.println("Handled Message "+message.getPayload());
 		Offer staff = new Gson().fromJson(message.getPayload(), Offer.class);
 		producer.send(staff);
+		session.sendMessage(new TextMessage("Hello, Msg!"));
 	}
 	
-	@Scheduled(fixedDelay=5000)
-	public void sendOfferDetails() throws InterruptedException, IOException {
-		System.out.println("triggered");
-		if(sessions!=null && !sessions.isEmpty()) {
-			Set<String> stokens = sessions.keySet();
-			Iterator<String> ite=stokens.iterator();
-			while(ite.hasNext()) {
-				String key = ite.next();
-				String retValue = new Gson().toJson(storage.get(key),Offer.class);
-				if(retValue!=null) {
-					WebSocketSession webSocketSession = sessions.get(key);
-					if(webSocketSession.isOpen()) {
-						webSocketSession.sendMessage(new TextMessage(retValue));
-					}else{
-						ite.remove();
-					}
-				}
-			}
-		}
-	}
-	
-
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		//the messages will be broadcasted to all users.
 		String stoken = (String) session.getAttributes().get("stoken");
 		sessions.put(stoken,session);
+		session.sendMessage(new TextMessage("Hello, " + stoken + "!"));
 	}
 	
 	 @Override
-	 public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-	     sessions.remove(session);
+	 public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		 String stoken = (String) session.getAttributes().get("stoken");
+		 System.out.println("Session Closed");
+	     sessions.remove(stoken);
 	 }
+	 
+	 @Override
+	    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+	        session.close(CloseStatus.SERVER_ERROR);
+	    }
 
 }

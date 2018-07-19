@@ -13,13 +13,20 @@ function setConnected(connected) {
 }
 
 function connect() {
-	
-   ws = new WebSocket('ws://localhost:8080/spring-websocket-plain/portfolio/1');
+  var stokenccp = $("#stoken").val()+"ccp";
+   ws = new SockJS('/spring-websocket-plain/portfolio?stoken='+stokenccp);
+   ws.onopen = function () {
+       setConnected(true);
+       console.log('Info: WebSocket connection opened.');
+     };
    ws.onmessage = function(data){
         	console.log(data);
             showGreeting(data.data);
    }
-   setConnected(true);
+   ws.onclose = function () {
+       setConnected(false);
+       console.log('Info: WebSocket connection closed.');
+     };
 }
 
 function disconnect() {
@@ -31,7 +38,8 @@ function disconnect() {
 }
 
 function sendName() {
-	var data = JSON.stringify({'offerId': $("#name").val(),'stoken':'1'})
+	var stokenccp = $("#stoken").val()+"cm";
+	var data = JSON.stringify({'offerId': $("#name").val(),'stoken':stokenccp})
     ws.send(data);
 }
 

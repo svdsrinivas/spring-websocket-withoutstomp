@@ -4,6 +4,7 @@
     <title>Hello WebSocket</title>
      <link href="./webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="./main.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js"></script>
     <script src="./webjars/jquery/jquery.min.js"></script>
     <script src="./app.js"></script>
 </head>
@@ -25,8 +26,12 @@
         </div>
         <div class="col-md-6">
             <form class="form-inline">
+             	<div class="form-group">
+                    <label for="name">stoken</label>
+                    <input type="text" id="stoken" class="form-control" placeholder="stoken here...">
+                </div>
                 <div class="form-group">
-                     <label for="name">Message</label>
+                    <label for="name">Message</label>
                     <input type="text" id="name" class="form-control" placeholder="Your name here...">
                 </div>
                 <button id="send" class="btn btn-default" type="submit">Send</button>

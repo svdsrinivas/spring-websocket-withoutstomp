@@ -1,9 +1,13 @@
 package com.mia.wskafka.kafka;
 
-public class Offer {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public class Offer{
+	@JsonProperty("stoken")
 	private String stoken;
+	@JsonProperty("offerId")
 	private String offerId;
+	
 	public String getStoken() {
 		return stoken;
 	}
@@ -16,6 +20,5 @@ public class Offer {
 	public void setOfferId(String offerId) {
 		this.offerId = offerId;
 	}
-	
 	
 }

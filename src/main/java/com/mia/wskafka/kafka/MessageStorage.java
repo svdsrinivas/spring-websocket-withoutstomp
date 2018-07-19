@@ -16,7 +16,9 @@ public class MessageStorage {
 	
 	public Offer get(String stoken) {
 		if(storage!=null && !storage.isEmpty()) {
-			return storage.get(stoken);
+			Offer offer = storage.get(stoken);
+			storage.remove(stoken);
+			return offer;
 		}
 		return null;
 	}

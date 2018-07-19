@@ -43,7 +43,6 @@ public class ReceiverConfig {
 	  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, Offer>> kafkaListenerContainerFactory() {
 	    ConcurrentKafkaListenerContainerFactory<String, Offer> factory = new ConcurrentKafkaListenerContainerFactory<>();
 	    factory.setConsumerFactory(consumerFactory());
-
 	    return factory;
 	  }
 
