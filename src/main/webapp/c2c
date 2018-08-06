@@ -1,520 +1,240 @@
-travel-uk-ctc-------------- test
-
-const {addDelay,loadLPUKTag} =require('../travel-uk-ctc')
-const  {Bootstrapper,window,$iOA,clearInterval,lpChatDiv1,lpChatDiv2}=require('../__mocks__/mock.travel-uk-ctc')
-describe('UT Coverage for uk c2c module', () => {
-    describe('travel uk c2c', () => {
-        test('set href defined',() => {
-            window.omn=undefined;
-            window.omn_hierarchy = null;
-            expect(addDelay()).toBeUndefined();
-        });
-
-        test('set href defined',() => {
-            window.omn={pagename : "Start",hierarchy:"UK|Travel|BookTravel|ER|travel_support",events : "Booking"}
-            window.omn_hierarchy = "UK|Travel|BookTravel|ER|travel_support"
-            expect(addDelay()).toBeUndefined();
-        });
-
-        test('set href defined',() => {
-            window.omn.hierarchy = "UK|Travel|BookTravel|ER|checkout"
-            window.omn_hierarchy = "UK|Travel|BookTravel|ER|checkout"
-            expect(loadLPUKTag()).toBeUndefined();
-        });
-
-        test('set href defined',() => {
-            window.omn_hierarchy=undefined;
-            window.omn.hierarchy = "UK|Travel|BookTravel|ER|checkout"
-            expect(loadLPUKTag()).toBeUndefined();
-        });
-        test('set href defined',() => {
-            window.omn_hierarchy=undefined;
-            window.omn.hierarchy = "UK|Travel|BookTravel|ER|travel_support"
-            expect(loadLPUKTag()).toBeUndefined();
-        });
-
-        test('set href defined',() => {
-            window.omn_hierarchy=undefined;
-            window.omn.hierarchy = "";
-            window.document.URL="https://www.global.americanexpress.com//service/bookings_view.cfm";
-            expect(loadLPUKTag()).toBeUndefined();
-        });
-
-        test('set href defined',() => {
-            window.omn_hierarchy=undefined;
-            window.omn = undefined;
-            expect(loadLPUKTag()).toBeUndefined();
-        });
-
-
-    })
-})
-=====================
-const {Bootstrapper, window,$iOA,clearInterval,lpChatDiv1,lpChatDiv2}=require('./__mocks__/mock.travel-uk-ctc')
-var delayCounter = 0;
-var omnPageName = "";
-//LP object declaration
-window.lpTag = window.lpTag || {};
-window.lpTag.vars = window.lpTag.vars || [];
-window.lpTag.dbs = window.lpTag.dbs || [];
-window.lpMTagConfig = window.lpMTagConfig || {};
-window.lpTag.sdes = window.lpTag.sdes || [];
-window.lpTag.section = 'uk travel en';
-window.lpTag.tagletSection = 'uk travel en';
-window.lpTag.autoStart = false;
-window.unit = "UK-Travel-purchase-path";
-//Delay function for omn object availability
-
-
-addDelay = function() {
-
-    try{
-        if (typeof window.omn_hierarchy === "string" || typeof window.omn === "object") {
-            loadLPUKTag();
-        } else {
-            delayCounter++;
-            if (delayCounter <= 30) {
-                setTimeout(function() {
-                    addDelay();
-                }, 100);
-            }
-        }
-    }catch(e){
-    }
-};
-if (typeof window.omn_hierarchy === "string" || typeof window.omn === "object") {
-    loadLPUKTag();
-} else {
-    addDelay();
-}
-function loadLPUKTag() {
-    omn_hierarchy=window.omn_hierarchy;
-    omn=window.omn;
-    omn_pagename=window.omn_pagename;
-    try{
-        if ((typeof(omn_hierarchy) !== "undefined" && omn_hierarchy.indexOf("UK") >= 0) || (typeof(omn) !== "undefined" && typeof(omn.hierarchy) !== "undefined" && omn.hierarchy.indexOf("UK") >= 0)) {
-            var fileHref = "https://icm.aexp-static.com/Internet/SMC/images/Chat/styles.css";
-            var ITMCSS = document.createElement("link");
-            ITMCSS.setAttribute("rel", "stylesheet");
-            ITMCSS.setAttribute("type", "text/css");
-            ITMCSS.setAttribute("href", fileHref);
-            document.getElementsByTagName("head")[0].appendChild(ITMCSS);
-
-            window.eventsVal = (typeof(omn_events) === "undefined" ? (typeof(omn) === "undefined" ? "" : (typeof(omn.events) === "undefined" ? "" : omn.events)) : omn_events);
-
-            console.log("omn url>>>>>",omn.hierarchy,window.document.URL)
-
-            if (typeof(omn_hierarchy) !== "undefined" && (omn_hierarchy.indexOf("UK|Travel|BookTravel|ER|checkout") >= 0 || omn_hierarchy.indexOf("UK|Travel|BookTravel|ER|Thankyou") >= 0)) {
-
-                window.lpTag.section = "UK-Travel-sales";
-            } else if (typeof(omn_hierarchy) !== "undefined" && (omn_hierarchy.indexOf("UK|Travel|BookTravel|ER|travel_support") >= 0 || omn_hierarchy.indexOf("UK|Travel|BookTravel|ER|faq") >= 0)) {
-
-                window.lpTag.section = "UK-Travel-service";
-            } else if (typeof(omn_hierarchy) !== "undefined" && (window.document.URL.indexOf("/travel/retrieve_booking.cfm") >= 0 || window.document.URL.indexOf("/service/bookings_view.cfm") >= 0)) {
-
-                window.lpTag.section = "UK-Travel-service";
-            } else if (typeof(omn) !== "undefined") {
-
-                if (typeof(omn.hierarchy) !== "undefined" && (omn.hierarchy.indexOf("UK|Travel|BookTravel|ER|checkout") >= 0 || omn.hierarchy.indexOf("UK|Travel|BookTravel|ER|Thankyou") >= 0)) {
-
-                    window.lpTag.section = "UK-Travel-sales";
-                } else if (typeof(omn.hierarchy) !== "undefined" && (omn.hierarchy.indexOf("UK|Travel|BookTravel|ER|travel_support") >= 0 || omn.hierarchy.indexOf("UK|Travel|BookTravel|ER|faq") >= 0)) {
-
-                    window.lpTag.section = "UK-Travel-service";
-                } else if ((window.document.URL.indexOf("/travel/retrieve_booking.cfm") >= 0 || window.document.URL.indexOf("/service/bookings_view.cfm") >= 0)) {
-                    console.log("Inside 6");
-                    window.lpTag.section = "UK-Travel-service";
-                }
-            }
-
-            if (typeof omn === "object" && typeof omn.pagename === "string") {
-                omnPageName = omn.pagename;
-            } else if (typeof(omn_pagename) === "string") {
-                omnPageName = omn_pagename;
-            }
-            console.log("Before push"+omnPageName );
-             window.lpTag.sdes.push({
-                "type": "service",
-                "service": {
-                  "topic": omnPageName,
-                  "category": eventsVal
-                }
-              });
-
-            /*window.lpMTagConfig.showGlobalButton = function() {
-                console.log("Isndie showGlobalButton");
-                $iOA("#c2c_tab").animate({
-                    bottom: 0
-                }, 500, function() {
-                    $iOA("#c2c_open_closer .c2c_middle_row").animate({
-                        'padding-bottom': 10
-                    }, 300);
-                });
-                $iOA(".click_to_chat #c2c_open_closer .c2c_sprite-images-close").click(function() {
-                    // console.log(typeof event);
-                    if (typeof event !== "undefined") {
-                        lpMTagConfig.stopEvent(event);
-                    }
-                    $iOA(".click_to_chat").fadeOut(500);
-                    lpSendData('session', 'buttonClosed', true);
-                });
-            };*/
-            /*(function() {
-                console.log("Inner function")
-                var firstTry = true,
-                    tryAgain;
-                var _lpStopTrying = function() {
-                    clearInterval(tryAgain);
-                };
-                // Set LivePerson running now the setup is complete
-                var startLETag = function() {
-                    if (window.lpTag.start) {
-                        //Setting the isDom var to true because the dom already loaded
-                        window.lpTag.isDom = true;
-                        window.lpTag.start();
-                        _lpStopTrying();
-                    } else if (firstTry) {
-                        firstTry = false;
-                        tryAgain = setInterval(startLETag, 100);
-                    }
-                };
-                startLETag();
-            })();*/
-           /*var lpChatDiv1 = document.createElement("div");
-            lpChatDiv1.setAttribute("id", "lpButtonChat1");
-            var lpChatDiv2 = document.createElement("div");
-            lpChatDiv2.setAttribute("id", "lpButtonChat2");
-            document.body.appendChild(lpChatDiv1);
-            document.body.appendChild(lpChatDiv2);
-            Bootstrapper.insertScript("//qwww.aexp-static.com/api/axpi/ensighten/liveengage-lp/le-mtagconfig.js");*/
-        }
-    }catch(e){
-    }
-}
-module.exports={addDelay,loadLPUKTag};
-=======
-
-mock
-
-const Bootstrapper={
-    ensMarket:'en-US',
-    hostName:function(str,val){
-        // console.log(window.location.hostname.indexOf(str,val))
-        if(window.location.hostname.indexOf(str,val)==0){
-            // console.log('yes')
-            return true;
-        }else{
-            //  console.log('no')
-            return false;
-        }
-    },
-    insertScript:function(s){return true},
-    loadScriptCallback:function(s){},
-    readCookie:function(s){
-        if(s=='amexsessioncookie'){
-            return true;
-        }else{
-            return false;
-        }
-    },
-    bindDOMParsed:function () { return true},
-    bindPageSpecificCompletion:function () { return true}
-
-}
-
-const omn_events = "Booking";
-const omn_pagename="Booking";
-const omn={pagename : "Start",hierarchy:"UK|Travel|BookTravel|ER|travel_support",events : "Booking"};
-const omn_hierarchy="";
-const myObj = {
-    "type": "service",
-    "service": {
-        "topic": "TestName",
-        "category": "start"
-    }
-}
-
-const doc = {URL:"https://www.global.americanexpress.com/travel/retrieve_booking.cfm",body:{appendChild:function(){return true}}};
-const window = {location:{href:"https://www.global.americanexpress.com/dashboard",pathname:"https://global.americanexpress.com/dashboard",hostname:'slglobal.americanexpress.com',
-        search:''},lpTag : "",lpMTagConfig:"",document:doc,omn_hierarchy:undefined,omn:omn,omn_events:omn_events,omn_hierarchy:omn_hierarchy,omn_pagename:omn_pagename};
-window.lpTag = {start:true,sdes:[""]};
-
-window.lpMTagConfig = {showGlobalButton:function(){return true}}
-//window.omn_hierarchy='UK|Travel|BookTravel|ER|checkout';
-//Begin: Added below one for UT coverage
-//window.lpTag.sdes = { push : function(a){return true } }
-//End: Added below one for UT coverage
-const lpChatDiv1 = {setAttribute:function(a,b){return true}}
-const lpChatDiv2 = {setAttribute:function(a,b){return true}}
-const $iOA = 'test';
-module.exports={Bootstrapper, window,$iOA,clearInterval,lpChatDiv1,lpChatDiv2};
-
-====================================================================
-test --travel_au_nz_jp_it_mx_ca_c2c
-
-const {checkENVLPTagFile,loadLPButtonDiv,setOmnData,addOmnDataDelay,checkOmnData,setSectionforLP} =require('../travel_au_nz_jp_it_mx_ca_c2c')
-const  {Bootstrapper, document, window,navigator,$iOA,clearInterval,ioaVariableCheck,lpChatButton,IOA}=require('../__mocks__/mock.travel_au_nz_jp_it_mx_ca_c2c')
-
-describe('travel au nz jp mx ca c2c', () => {
-    describe('travel au nz jp mx ca c2c', () => {
-
-        test('Check HostName',() => {
-            window.location.hostname = "travel-uat.americanexpress.com";
-            expect(checkENVLPTagFile()).toBeUndefined();
-        });
-        test('Check HostName',() => {
-            window.location.hostname = "travel.americanexpress.com";
-            expect(checkENVLPTagFile()).toBeUndefined();
-        });
-        test('travel au nz jp mx ca c2c',() => {
-            expect(loadLPButtonDiv()).toBeUndefined();
-        });
-        test('travel au nz jp mx ca c2c',() => {
-            window.omn=undefined;
-            window.omn_pagename=undefined;
-            expect(setOmnData()).toBeUndefined();
-        });
-        test('travel au nz jp mx ca c2c',() => {
-            window.omn={pagename : "Start",hierarchy:"IT|Travel|Flights",events : "Booking"};
-            expect(setOmnData()).toBeUndefined();
-        });
-        test('travel au nz jp mx ca c2c',() => {
-            window.omn_pagename='startPage';
-            expect(setOmnData()).toBeUndefined();
-        });
-        test('travel au nz jp mx ca c2c',() => {
-            window.omn=undefined;
-            window.omn_pagename=undefined;
-            window.s=undefined;
-            expect(setOmnData()).toBeUndefined();
-        });
-        test('setSectionfor NZ',() => {
-            Bootstrapper.ensMarket = "nz_en";
-            expect(setSectionforLP()).toBeUndefined();
-        });
-        test('setSectionfor AU',() => {
-            Bootstrapper.ensMarket = "au_en";
-            expect(setSectionforLP()).toBeUndefined();
-        });
-        test('setSectionfor JP',() => {
-            Bootstrapper.ensMarket = "jp_ja";
-            expect(setSectionforLP()).toBeUndefined();
-        });
-        test('setSectionfor MX',() => {
-            Bootstrapper.ensMarket = "mx_es";
-            expect(setSectionforLP()).toBeUndefined();
-        });
-        test('setSectionfor IT',() => {
-            Bootstrapper.ensMarket = "it_it";
-            expect(setSectionforLP()).toBeUndefined();
-        });
-        test('setSectionfor CA-FN',() => {
-            Bootstrapper.ensMarket = "ca_en";
-            expect(setSectionforLP()).toBeUndefined();
-        });
-        test('setSectionfor CA-FR',() => {
-            Bootstrapper.ensMarket = "ca_fr";
-            expect(setSectionforLP()).toBeUndefined();
-        });
-        test('Check Omniture Data with omn_hierarchy vriable',() => {
-            expect(checkOmnData("AU|Travel|Fights|Start")).toBeUndefined();
-        });
-
-        test('Check Omniture Data with omn object',() => {
-            window.omn=undefined;
-            expect(checkOmnData()).toBeUndefined();
-        });
-       test('Check Omniture Data with omn object',() => {
-            window.omn={pagename : "",hierarchy:"",events : ""};;
-
-            expect(checkOmnData()).toBeUndefined();
-        });
-        test('Check Omniture Data with omn object',() => {
-            window.omn={pagename : "",hierarchy:"",events : ""};;
-            expect(addOmnDataDelay()).toBeUndefined();
-        });
-    })
-})
-
--------------------------------
-
-const  {Bootstrapper, document, window,navigator,$iOA,clearInterval,ioaVariableCheck,lpChatButton,IOA}=require('./__mocks__/mock.travel_au_nz_jp_it_mx_ca_c2c')
+travel-us-cartPage-c2c
+const  {Bootstrapper,window,document,lpChatGlobalDiv,omn_hierarchy,omn_pagename,omn}=require('./_mocks_/mock-travel_us_cartPage-c2c')
 
 try{
-    var hostName = window.location.hostname;
-    var delayCounter = 0;
+    var hostName=window.location.hostname;
+    var pageNameflag = false;
     var omnPageName = "";
-    var eventValue = "";
-    var omnHierarchy= "";
+    var omnHierarchy = "";
+    var lpPageName = "";
+    var omnintercheck = "";
+    var customerType = "standard";
+    var delayCounterCart = 0;
     var lpTagFile = "";
-
-//Below check for initiate environment specific LP Tag file
-    function checkENVLPTagFile() {
-        hostName = window.location.hostname;
-        if (hostName.indexOf('uat') > -1 || hostName.indexOf('-qa') > -1) {
-            lpTagFile = "//qwww.aexp-static.com/api/axpi/ensighten/ctc-ca-mx-it/le-mtagconfig.js";
-        } else {
-            lpTagFile = "//www.aexp-static.com/api/axpi/ensighten/ctc-ca-mx-it/le-mtagconfig.js";
-        }
+    var sessionCookie = Bootstrapper.readCookie("amexsessioncookie");
+    if(typeof(Bootstrapper.ensEnv) !== "undefined" && Bootstrapper.ensEnv == "2"){
+        lpTagFile = "//qwww.aexp-static.com/api/axpi/ensighten/liveengage-lp/le-mtagconfig.js";
+    }else{
+        lpTagFile = "//www.aexp-static.com/api/axpi/ensighten/liveengage-lp/le-mtagconfig.js";
     }
-    checkENVLPTagFile();
-
-    loadLPButtonDiv = function(){
-        try{
-
-            /*   document.body.appendChild(lpChatButton);
-               var fileHref = "https://icm.aexp-static.com/Internet/SMC/images/Chat/styles.css";
-               var ITMCSS = document.createElement("link");
-               ITMCSS.setAttribute("rel", "stylesheet");
-               ITMCSS.setAttribute("type", "text/css");
-               ITMCSS.setAttribute("href", fileHref);
-               document.getElementsByTagName("head")[0].appendChild(ITMCSS);*/
-           // window.lpMTagConfig.showGlobalButton = function() {
-                try{
-                    if(typeof IOA !== "undefined"){
-                        $iOA( "#c2c_tab" ).animate({
-                            bottom: 0
-                        }, 500, function() {
-                          /*  $iOA( "#c2c_open_closer .c2c_middle_row" ).animate({
-                                'padding-bottom': 10
-                            }, 300);*/
-                        });
-                       /* $iOA(".click_to_chat #c2c_open_closer .c2c_sprite-images-close").click(function () {
-                            // console.log(typeof event);
-                            if (typeof event !== "undefined") {
-                                lpMTagConfig.stopEvent(event);
-                            }
-                            $iOA(".click_to_chat").fadeOut(500);
-                            lpSendData('session','buttonClosed',true);
-                        });*/
-                    }
-                }catch(err){
-                }
-            //};
-        }catch(err){
-        }
-    };
-
-    setOmnData = function(omn_hierarchy){  // This method is used for reading omn data from the page
-        try{
-            omn = window.omn;
-            s= window.s;
-            omn_events= window.omn_events;
-
-            if(typeof omn_hierarchy === "string"){
-                omnHierarchy = omn_hierarchy;
-            }else if(typeof omn === "object" && typeof omn.hierarchy === "string"){
-                omnHierarchy = omn.hierarchy;
-            }else if(typeof s !== "undefined" && typeof s.pageName !== "undefined"){
-                omnHierarchy = s.pageName;
-            }
-            if(typeof(window.omn_pagename) !== "undefined") {
-                omnPageName = window.omn_pagename;
-            }else if(typeof omn === "object" && typeof(omn.pagename) === "string"){
-                omnPageName = omn.pagename;
-            }else if(typeof s === "object"){
-                omnPageName = s.pageName;
-            }
-            if(typeof omn === "object" && typeof(omn.events) !== "undefined"){
-                eventValue = omn.events;
-            }else if(typeof(omn_events) !== "undefined"){
-                eventValue = omn_events;
-            }
-
-//send omn data to LP system
-            if(typeof window.lpTag.sdes === "object"){
-                window.lpTag.sdes.push(
-                    {
-                        "type": "service",
-                        "service": {
-                            "topic": omnPageName,
-                            "category": eventValue,
-                            "serviceId": omnHierarchy
-                        }
-                    }
-                );
-            }
-            loadLPButtonDiv();
-        }catch(err){
-
-        }
-    };
-    addOmnDataDelay = function(){//This method looks for omn details and wait maximum 5 secs
-        try{
-            if(typeof omn_hierarchy === "string" || typeof omn === "object"){
-                setOmnData(omn_hierarchy);
-            }else{
-                delayCounter++;
-                if(delayCounter <= 50){
-                    setTimeout(function(){addOmnDataDelay();}, 100);
-                }else{
-                    setOmnData(omn_hierarchy);
-                }
-            }
-        }catch(err){
-        }
-    };
-
-//Declare LP variables
     window.lpTag = window.lpTag || {};
     window.lpTag.vars = window.lpTag.vars || [];
     window.lpTag.dbs = window.lpTag.dbs || [];
     window.lpMTagConfig = window.lpMTagConfig || {};
     window.lpTag.sdes = window.lpTag.sdes||[];
-//Checks for market type and initiate section & tagletSection variables for injecting market specific button on the application
-    function setSectionforLP(){
-        if(typeof(Bootstrapper.ensMarket)!=="undefined" && Bootstrapper.ensMarket==="nz_en"){
-            window.lpTag.section = 'nz travel en';
-            window.lpTag.tagletSection = 'nz travel en';
-        }else if(typeof(Bootstrapper.ensMarket)!=="undefined" && Bootstrapper.ensMarket==="au_en"){
-            window.lpTag.section = 'au travel en';
-            window.lpTag.tagletSection = 'au travel en';
-        }else if(typeof(Bootstrapper.ensMarket)!=="undefined" && Bootstrapper.ensMarket==="jp_ja"){
-            window.lpTag.section = 'jp travel jp';
-            window.lpTag.tagletSection = 'jp travel jp';
-        }else if(typeof(Bootstrapper.ensMarket)!=="undefined" && Bootstrapper.ensMarket==="mx_es"){
-            window.lpTag.section = 'MexicoTravelSP';
-            window.lpTag.tagletSection = 'MexicoTravelSP';
-        }else if(typeof(Bootstrapper.ensMarket)!=="undefined" && Bootstrapper.ensMarket==="it_it"){
-            window.lpTag.section = 'ItalyTravelIT';
-            window.lpTag.tagletSection = 'ItalyTravelIT';
-        }else if(typeof(Bootstrapper.ensMarket)!=="undefined" && Bootstrapper.ensMarket==="ca_en"){
-            window.lpTag.section = 'CanadaTravelEN';
-            window.lpTag.tagletSection = 'CanadaTravelEN';
-        }else if(typeof(Bootstrapper.ensMarket)!=="undefined" && Bootstrapper.ensMarket==="ca_fr"){
-            window.lpTag.section = 'CanadaTravelFR';
-            window.lpTag.tagletSection = 'CanadaTravelFR';
+    window.lpTag.section = 'us travel en';
+    window.lpTag.tagletSection = 'travel';
+
+    Bootstrapper.insertScript("//www.aexp-static.com/api/axpi/ioa/js/iOAjquery1.6.3.min.js"); // Required for Vendor hosted pages
+
+    checkOmnVariables = function(){
+        if(typeof omn_hierarchy === "string" || typeof omn === "object"){
+            callLpCode();
+        } else{
+            delayCounterCart++;
+            if (delayCounterCart <= 50) {
+                setTimeout(function(){checkOmnVariables();}, 100);
+            }
         }
+    };
+
+    callLpCode = function() {
+        try{
+//Load Lp chat button styles
+           /* var fileHref = "https://icm.aexp-static.com/Internet/SMC/images/Chat/styles.css";
+            var LPCSS = document.createElement("link");
+            LPCSS.setAttribute("rel", "stylesheet");
+            LPCSS.setAttribute("type", "text/css");
+            LPCSS.setAttribute("href", fileHref);
+            document.getElementsByTagName("head")[0].appendChild(LPCSS);*/
+//Inject div for injecting LP chat button
+
+            document.body.appendChild(lpChatGlobalDiv);
+
+            if(typeof(omn_pagename) !== "undefined"){
+                omnPageName = omn_pagename;
+            } else if(typeof(omn) !== "undefined" && typeof(omn.pagename) !== "undefined"){
+                omnPageName = omn.pagename;
+            } else if(typeof(s) !== "undefined" && typeof(s.pageName) !== "undefined"){
+                omnPageName = s.pageName;
+            } else {
+                omnPageName = "NotAvailble";
+            }
+
+            if(typeof(omn_hierarchy) !== "undefined"){
+                omnHierarchy = omn_hierarchy;
+            } else if(typeof(omn) !== "undefined" && typeof(omn.hierarchy) !== "undefined"){
+                omnHierarchy = omn.hierarchy;
+            }else{
+                omnHierarchy = "NotAvailble";
+            }
+            if(omnPageName === "NotAvailble"){
+                lpPageName = omnHierarchy+"|"+omnPageName;
+            } else {
+                lpPageName = omnPageName;
+            }
+
+            if(typeof lpPageName !== "" ){
+                if(lpPageName.indexOf("Platinum")>-1 && sessionCookie!==null){
+                    customerType="platinum";
+                }
+            }
+//send omn data to LP system
+            lpTag.section = "US-Travel-sales";
+            if(typeof lpTag.sdes === "object"){
+                lpTag.sdes.push(
+                    {
+                        "type": "service",
+                        "service": {
+                            "topic": lpPageName
+                        },
+                        "type": "ctmrinfo",
+                        "info": {
+                            "ctype": customerType
+                        }
+                    }
+                );
+            }
+
+//var inavlog = typeof(iNavUserLoggedIn) !== "undefined" && iNavUserLoggedIn === true;
+//console.log("inavlogvariable::"+inavlog);
+//Load lp mTag file
+            Bootstrapper.insertScript(lpTagFile);
+        }catch(err){}
+    };
+
+    if (typeof(omn_pagename) === "undefined" || typeof(omn) === "undefined") {
+        checkOmnVariables();
+    } else{
+        callLpCode();
     }
-    Bootstrapper.insertScript(lpTagFile); // Load LP mTag file
 
-    function checkOmnData(omn_hierarchy){
-        if(typeof omn_hierarchy === "string" || typeof window.omn === "object"){
-            setOmnData(omn_hierarchy);
-        }else{
-            addOmnDataDelay();
-        }
-    }
-}catch(err){
-}
+    omnvarupdate=function(){
+        try{
+            if(typeof(omn) !== "undefined" && typeof(omn.pagename) !== "undefined"){
+                omnPageName = omn.pagename;
+                pageNameflag = false;
+            }
+            else if(typeof(omn_pagename) !== "undefined"){
+                omnPageName = omn_pagename;
+                pageNameflag = false;
+            }else if(typeof(s) !=="undefined" && typeof(s.pageName) !== "undefined"){
+                omnPageName = s.pageName;
+                pageNameflag = true;
+            } else {
+                omnPageName = "NotAvailble";
+            }
+            if(typeof(omn) !== "undefined" && typeof(omn.hierarchy) !== "undefined"){
+                omnHierarchy = omn.hierarchy;
+            }else if(typeof(omn_hierarchy) !== "undefined"){
+                omnHierarchy = omn_hierarchy;
+            } else {
+                omnHierarchy = "NotAvailble";
+            }
 
-module.exports={checkENVLPTagFile,loadLPButtonDiv,setOmnData,addOmnDataDelay,checkOmnData,setSectionforLP};
+            if(omnPageName === "NotAvailble"){
+                lpPageName = omnHierarchy+"|"+omnPageName;
+            } else {
+                lpPageName = omnPageName;
+            }
+// Send data to Lp system
+            if(typeof lpTag.sdes === "object"){
+                lpTag.sdes.push(
+                    {
+                        "type": "service",
+                        "service": {
+                            "topic": lpPageName
+                        },
+                        "type": "ctmrinfo",
+                        "info": {
+                            "ctype": customerType
+                        }
+                    }
+                );
+            }
+        }catch(err){}
+    };
+    addlistenrstobuttons = function(button_idname,idxnum) {
+        try{
+            function addlistenrs(button_idname,idxnum){
+                var id = document.querySelectorAll(button_idname)[idxnum];
+                if(id !== undefined && id !== null && id !== ""){
+                    Bootstrapper.unobtrusiveAddEvent(id,"onclick",function(){
+                        //console.log("button onclick::"+id);
+                        window.setTimeout(function(){Bootstrapper.omnvarupdate();},3000);});
+                }
+            }
+            if(idxnum === 5 && button_idname === ".button-edit._jq-accordion-edit"){
+                for(var j=0;j<idxnum;j++){
+                    // console.log("edit button::"+j);
+                    addlistenrs(button_idname,j);
+                }
+            }else if(idxnum === 0){
+                for(var i=0;i<button_idname.length;i++){
+                    // console.log(button_idname[i]+"::save button::"+idxnum);
+                    addlistenrs(button_idname[i],idxnum);
+                }
+            }else if(idxnum === 1){
+                //console.log(button_idname+"::Payment save button::"+idxnum);
+                addlistenrs(button_idname,idxnum);
+            }
+        }catch(err){}
+    };
+//Sending section level details to Lp from the Cart page
+//Travel insurance - Information save button,Preferred seat - Insurance no save button,Preferred seat - Insurance Yes Enroll Agree button,
+//Preferred seat - Insurance Yes Disagree button,Payment information - seat skip selection button,Payment information - seat selection save button
+    var buttoninforArr=[".button-save._jq-submit-button","#trip_insurance_no_submit","#enroll","#do-not-enroll",".skip-seats._jq-noThanks",".save-link.seats-save._jq-seats-save"];
+//All buttons
+    var idxnumsArr=[0,1,5];
+    Bootstrapper.addlistenrstobuttons(buttoninforArr,idxnumsArr[0]);
+//All edit button
+    Bootstrapper.addlistenrstobuttons(".button-edit._jq-accordion-edit",idxnumsArr[2]);
+//Booking - Payment - Pay with points/user your cards - save button
+    Bootstrapper.addlistenrstobuttons(".button-save.clear._jq-submit-button",idxnumsArr[1]);
 
-----------------------------
+}catch(err){}
+
+module.exports={checkOmnVariables,callLpCode,addlistenrstobuttons,omnvarupdate};
+
+=============================================
+
+const {checkOmnVariables,callLpCode,addlistenrstobuttons,omnvarupdate} =require('../models/travel-us-cartPage-c2c')
+const  {Bootstrapper, document, window,navigator,$iOA,clearInterval,omn_hierarchy}=require('../models/_mocks_/mock-travel_us_cartPage-c2c')
+
+describe('travel us cartPage c2c', () => {
+    describe('travel us cartPage', () => {
+        test('travel us cartPage',() => {
+            expect(checkOmnVariables()).toBeUndefined();
+        });
+        test('travel us cartPage',() => {
+            expect(callLpCode()).toBeUndefined();
+        });
+        test('travel us cartPage',() => {
+            expect(addlistenrstobuttons()).toBeUndefined();
+        });
+        test('travel us cartPage',() => {
+            expect(omnvarupdate()).toBeUndefined();
+        });
+    })
+})
+
+
+===========================================
 
 const Bootstrapper={
     ensMarket:'en-US',
+	ensEnv:"2",
     hostName:function(str,val){
-        // console.log(window.location.hostname.indexOf(str,val))
+       // console.log(window.location.hostname.indexOf(str,val))
         if(window.location.hostname.indexOf(str,val)==0){
-            // console.log('yes')
+           // console.log('yes')
             return true;
         }else{
-            //  console.log('no')
+          //  console.log('no')
             return false;
         }
-    },
-    insertScript:function(s){return true},
+        },
+    insertScript:function(s){},
     readCookie:function(s){
         if(s=='amexsessioncookie'){
             return true;
@@ -524,23 +244,21 @@ const Bootstrapper={
     },
     bindDOMParsed:function () { return true},
     bindPageSpecificCompletion:function () { return true}
+
+    
+
 }
 
 clearInterval = function (interval) {
 
 }
-const omn={pagename : "Start",hierarchy:"IT|Travel|Flights",events : "Booking"};
-const s = {pageName:"StartPage"};
-const omn_events = "Booking";
 const document={body:{appendChild: function(s){return true}},createElement:function(s){return "<div></div>"},documentElement:{lang:"en_US"},location:{pathname:"/login"}}
-const lpChatButton = {setAttribute:function(){return true}}
-const window={location:{href:"https://travel.americanexpress.co.it/flights",pathname:"https://www.global.americanexpress.com/rewards.html",
-        hostname:"travel-qa.americanexpress.com",search:''},lpTag:{vars:[],newPage:'begin.do',sdes:[]},lpMTagConfig:{},site:undefined,omn_pagename:undefined,
-        omn:omn,s:s,omn_events:omn_events,lpMTagConfig:{showGlobalButton:function(){return true;}}}
+const lpChatGlobalDiv = {setAttribute:function(){return true}}
+const window={location:{href:"https://www.global.americanexpress.com/begin.do",pathname:"https://www.global.americanexpress.com/rewards.html",hostName:'rewards',hostname:'global.americanexpress.com',search:''},lpTag:{vars:[],newPage:'begin.do',sdes:[]},lpMTagConfig:{},site:undefined}
 const navigator={userAgent:'aexphybrid'}
-const $iOA = {click:function(a){return true},animate:function(a){return true;},fadeOut:function(a){return true;}}
+const $iOA = 'test';
 const ioaVariableCheck='true';
-const IOA={};
-
-
-module.exports={Bootstrapper, document, window,navigator,$iOA,clearInterval,ioaVariableCheck,lpChatButton,IOA};
+const omn_pagename = "CartPage";
+const omn_hierarchy = "US|Travel|Carts|CartPage";
+const omn = {pagename: "CartPage", hierarchy :"US|Travel|Carts|CartPage"};
+module.exports={Bootstrapper, document, window,navigator,$iOA,clearInterval,ioaVariableCheck,lpChatGlobalDiv,omn_hierarchy,omn_pagename,omn};
